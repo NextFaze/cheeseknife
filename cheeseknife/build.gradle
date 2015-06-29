@@ -1,0 +1,101 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+String artifactVersion = '1.0.0'
+def artifactVersionCode = 1
+
+group = 'com.nextfaze'
+version = artifactVersionCode
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 22
+
+        versionCode artifactVersionCode
+        versionName artifactVersion
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                String versionName = variant.mergedFlavor.versionName
+                String fileName = "${archivesBaseName}-${versionName}.aar"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
+}
+
+// publishing configuration (e.g. to maven / filesystem)
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "${mavenPublishUrl}") {
+                authentication(userName: "${mavenPublishUser}", password: "${mavenPublishPassword}")
+            }
+
+            // customise pom file
+            pom {
+                artifactId = 'cheeseknife'
+                project {
+                    name "cheeseknife"
+                    description "View \"injection\" library for Android, that works with library modules"
+                    url "https://github.com/NextFaze/cheeseknife"
+                    packaging "aar"
+                    licenses {
+                        license {
+                            name 'Apache License, Version 2.0'
+                            url 'https://github.com/NextFaze/cheeseknife/LICENSE.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name 'NextFaze'
+                            email 'contact@nextfaze.com'
+                            organization 'NextFaze'
+                            organizationUrl 'http://www.nextfaze.com'
+                        }
+                    }
+                    scm {
+                        connection "scm:git:git@github.com:NextFaze/cheeseknife.git"
+                        developerConnection "scm:git:git@github.com:NextFaze/cheeseknife.git"
+                        url "git@github.com:NextFaze/cheeseknife.git"
+                    }
+                }
+            }
+            // sign pom files too
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        }
+    }
+}
+
+// sign .aar files
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:22.2.0'
+
+    // Lombok.
+    provided 'org.projectlombok:lombok:1.16.4'
+
+    compile 'org.slf4j:slf4j-api:1.7.5'
+
+    // Annotations.
+    compile 'org.jetbrains:annotations:13.0'
+}
