@@ -8,7 +8,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * Denote that the view specified by the injection is not required to be present.
+ * Denote that the view specified by the binding is not required to be present.
  * <pre><code>
  * {@literal @}Optional @Bind(id = R.id.title) TextView subtitleView;
  * </code></pre>

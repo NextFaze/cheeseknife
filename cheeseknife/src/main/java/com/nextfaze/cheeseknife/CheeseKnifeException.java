@@ -35,7 +35,7 @@ public class CheeseKnifeException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder("could not find resource while injecting ");
+        StringBuilder builder = new StringBuilder("could not find resource while binding ");
         builder.append(mTarget);
 
         if(mHandler != null) {

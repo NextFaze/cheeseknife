@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.view.View;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -21,6 +19,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public final class CheeseKnife {
 
@@ -29,72 +30,72 @@ public final class CheeseKnife {
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@link Activity}. The current content
+     * Bind annotated fields and methods in the specified {@link Activity}. The current content
      * view is used as the view root.
      *
-     * @param target Target activity for field injection.
+     * @param target Target activity for field Binding.
      */
-    public static void inject(Activity target) {
-        inject(target, target, Finder.ACTIVITY);
+    public static void bind(Activity target) {
+        bind(target, target, Finder.ACTIVITY);
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@link View}. The view and its children
+     * Bind annotated fields and methods in the specified {@link View}. The view and its children
      * are used as the view root.
      *
-     * @param target Target view for field injection.
+     * @param target Target view for field Binding.
      */
-    public static void inject(View target) {
-        inject(target, target, Finder.VIEW);
+    public static void bind(View target) {
+        bind(target, target, Finder.VIEW);
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@link Dialog}. The current content
+     * Bind annotated fields and methods in the specified {@link Dialog}. The current content
      * view is used as the view root.
      *
-     * @param target Target dialog for field injection.
+     * @param target Target dialog for field Binding.
      */
-    public static void inject(Dialog target) {
-        inject(target, target, Finder.DIALOG);
+    public static void bind(Dialog target) {
+        bind(target, target, Finder.DIALOG);
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@code target} using the {@code source}
+     * Bind annotated fields and methods in the specified {@code target} using the {@code source}
      * {@link Activity} as the view root.
      *
-     * @param target Target class for field injection.
+     * @param target Target class for field Binding.
      * @param source Activity on which IDs will be looked up.
      */
-    public static void inject(Object target, Activity source) {
-        inject(target, source, Finder.ACTIVITY);
+    public static void bind(Object target, Activity source) {
+        bind(target, source, Finder.ACTIVITY);
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@code target} using the {@code source}
+     * Bind annotated fields and methods in the specified {@code target} using the {@code source}
      * {@link View} as the view root.
      *
-     * @param target Target class for field injection.
+     * @param target Target class for field Binding.
      * @param source View root on which IDs will be looked up.
      */
-    public static void inject(Object target, View source) {
-        inject(target, source, Finder.VIEW);
+    public static void bind(Object target, View source) {
+        bind(target, source, Finder.VIEW);
     }
 
     /**
-     * Inject annotated fields and methods in the specified {@code target} using the {@code source}
+     * Bind annotated fields and methods in the specified {@code target} using the {@code source}
      * {@link Dialog} as the view root.
      *
-     * @param target Target class for field injection.
+     * @param target Target class for field Binding.
      * @param source Dialog on which IDs will be looked up.
      */
-    public static void inject(Object target, Dialog source) {
-        inject(target, source, Finder.DIALOG);
+    public static void bind(Object target, Dialog source) {
+        bind(target, source, Finder.DIALOG);
     }
 
-    static void inject(final Object target, Object source, Finder finder) throws CheeseKnifeException {
-        log.debug("injecting views in {}", target);
+    static void bind(final Object target, Object source, Finder finder) throws CheeseKnifeException {
+        log.debug("binding views in {}", target);
 
-        // do not inject views in edit mode
+        // do not bind views in edit mode
         if(target instanceof View) {
             View targetView = (View) target;
             if(targetView.isInEditMode())
@@ -131,11 +132,11 @@ public final class CheeseKnife {
                 setFieldValue(field, target, view);
         }
 
-        log.debug("injecting onClick handlers in {}", target);
-        injectOnClick(target, source, finder, OnClickAnnotation.ON_CLICK);
-        injectOnClick(target, source, finder, OnClickAnnotation.ON_LONG_CLICK);
+        log.debug("binding onClick handlers in {}", target);
+        bindOnClick(target, source, finder, OnClickAnnotation.ON_CLICK);
+        bindOnClick(target, source, finder, OnClickAnnotation.ON_LONG_CLICK);
 
-        log.debug("injection complete");
+        log.debug("binding complete");
     }
 
     public static void reset(Object target) {
@@ -145,8 +146,8 @@ public final class CheeseKnife {
         // TODO: reset onClick handlers ?
     }
 
-    private static void injectOnClick(final Object target, final Object source, Finder finder,
-                                      OnClickAnnotation clickAnnotation) {
+    private static void bindOnClick(final Object target, final Object source, Finder finder,
+                                    OnClickAnnotation clickAnnotation) {
         Class<? extends Annotation> annotationClass = clickAnnotation.getAnnotationClass();
 
         for (final Method method : getAnnotatedMethods(target, annotationClass)) {
@@ -161,7 +162,7 @@ public final class CheeseKnife {
                         views.add(view);
                     }
                     else if(!isOptional) {
-                        // view not found and injection is non-optional, raise error
+                        // view not found and binding is non-optional, raise error
                         throw new CheeseKnifeException(target, id);
                     }
                 }
