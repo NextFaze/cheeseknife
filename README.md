@@ -3,7 +3,7 @@ cheeseknife
 
 ![Logo](website/static/cheeseknife_logo.png)
 
-Field and method binding for Android views using reflection.
+Field and method binding for Android views using reflection. Inspired by JakeWharton/butterknife
 
 ```java
 class ExampleActivity extends Activity {
