@@ -1,9 +1,10 @@
-cheeseknife
-===========
+# cheeseknife
 
 ![Logo](website/static/cheeseknife_logo.png)
 
 Field and method binding for Android views using reflection. Inspired by JakeWharton/butterknife
+
+## Example usage
 
 ```java
 class ExampleActivity extends Activity {
@@ -22,8 +23,7 @@ class ExampleActivity extends Activity {
 }
 ```
 
-Download
---------
+## Download
 
 Download via Maven:
 ```xml
