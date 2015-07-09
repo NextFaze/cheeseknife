@@ -92,8 +92,10 @@ public final class CheeseKnife {
         bind(target, source, Finder.DIALOG);
     }
 
-    static void bind(final Object target, Object source, Finder finder) throws CheeseKnifeException {
+    static void bind(@Nullable final Object target, Object source, Finder finder) throws CheeseKnifeException {
         log.debug("binding views in {}", target);
+        if(target == null)
+            return;
 
         // do not bind views in edit mode
         if(target instanceof View) {
@@ -139,11 +141,14 @@ public final class CheeseKnife {
         log.debug("binding complete");
     }
 
-    public static void reset(Object target) {
+    public static void unbind(@Nullable Object target) {
+        if(target == null)
+            return;
+
         for (Field field : getAnnotatedFields(target, Bind.class)) {
             setFieldValue(field, target, null);
         }
-        // TODO: reset onClick handlers ?
+        // TODO: unbind onClick handlers ?
     }
 
     private static void bindOnClick(final Object target, final Object source, Finder finder,
@@ -236,7 +241,7 @@ public final class CheeseKnife {
     }
 
     // return a list of fields in target that have Bind annotations
-    private static List<Field> getAnnotatedFields(Object target, Class<? extends Annotation> annotationClass) {
+    private static List<Field> getAnnotatedFields(@NonNull Object target, Class<? extends Annotation> annotationClass) {
         List<Field> list = new ArrayList<>();
         Set<Field> fields = new HashSet<>();
         fields.addAll(Arrays.asList(target.getClass().getFields()));
@@ -249,7 +254,7 @@ public final class CheeseKnife {
         return list;
     }
 
-    private static List<Method> getAnnotatedMethods(Object target, Class<? extends Annotation> annotationClass) {
+    private static List<Method> getAnnotatedMethods(@NonNull Object target, Class<? extends Annotation> annotationClass) {
         List<Method> list  = new ArrayList<>();
         Set<Method> methods = new HashSet<>();
         methods.addAll(Arrays.asList(target.getClass().getMethods()));
